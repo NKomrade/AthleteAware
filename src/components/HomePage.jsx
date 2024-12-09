@@ -106,9 +106,9 @@ export default function HomePage() {
                 </p>
                 <a
                   href="/courses"
-                  className="bg-blue-600 text-white text-xl text-center font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 ease-in-out"
+                  className=" text-black text-xl py-3 px-8 hover:font-bold"
                 >
-                  Enroll Now
+                  Enroll Now 
                 </a>
               </div>
 

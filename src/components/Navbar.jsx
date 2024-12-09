@@ -18,12 +18,14 @@ function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <div className="relative group">
-              <button className="flex items-center space-x-1 text-gray-600 hover:text-gray-900">
-                <span>Courses</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
+              <Link to="/courses">
+                <button className="flex items-center space-x-1 text-gray-600 hover:text-gray-900">
+                  <span>Courses</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </Link>
             </div>
             <div className="relative group">
               <Link to="/community">
@@ -50,7 +52,7 @@ function Header() {
               Log In
             </Link>
             <Link
-              to="/signup"
+              to="/register"
               className="px-4 py-2 text-white bg-[#4eb2ff] hover:bg-[#569ed6] rounded-lg transition-colors"
             >
               Start Learning

@@ -1,10 +1,13 @@
-import React, { useState, useRef } from 'react';
+// CommunityForum.js
+import React, { useState, useRef } from "react";
 import { AiOutlineBold, AiOutlineItalic } from "react-icons/ai";
-import { MessageCircle, ThumbsUp, Share2 } from 'lucide-react';
-import { BiImageAdd } from "react-icons/bi"; // Import the BiImageAdd icon
-import { RiCloseFill } from "react-icons/ri"; // for the close/remove icon
+import { MessageCircle } from "lucide-react";
+import { BiImageAdd, BiUpvote, BiDownvote } from "react-icons/bi";
+import { RiCloseFill } from "react-icons/ri";
+import { useUser } from "../context/UserContext"; // Adjust the path as needed
 
 export default function CommunityForum() {
+  const { user } = useUser(); // Get user state from context
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
@@ -12,7 +15,15 @@ export default function CommunityForum() {
   const contentEditableRef = useRef(null);
 
   // Function to open modal
-  const openModal = () => setIsModalOpen(true);
+  const openModal = () => {
+    if (!user) {
+      alert("Please register or login to post!");
+      // Redirect to register page if not logged in
+      window.location.href = "/register";
+    } else {
+      setIsModalOpen(true);
+    }
+  };
 
   // Function to close modal
   const closeModal = () => setIsModalOpen(false);
@@ -31,15 +42,18 @@ export default function CommunityForum() {
   };
 
   // Functions for text formatting
-  const handleBold = () => {
+  const handleBold = (e) => {
+    e.preventDefault();
     document.execCommand("bold");
   };
 
-  const handleItalic = () => {
+  const handleItalic = (e) => {
+    e.preventDefault();
     document.execCommand("italic");
   };
 
-  const handleUnderline = () => {
+  const handleUnderline = (e) => {
+    e.preventDefault();
     document.execCommand("underline");
   };
 
@@ -54,6 +68,39 @@ export default function CommunityForum() {
     }
   };
 
+  // Handle Upvote
+  const handleUpvote = () => {
+    if (!user) {
+      alert("Please register or login to upvote!");
+      window.location.href = "/register";
+    } else {
+      console.log("Upvoted!");
+      // Implement upvote logic here
+    }
+  };
+
+  // Handle Downvote
+  const handleDownvote = () => {
+    if (!user) {
+      alert("Please register or login to downvote!");
+      window.location.href = "/register";
+    } else {
+      console.log("Downvoted!");
+      // Implement downvote logic here
+    }
+  };
+
+  // Handle Comment
+  const handleComment = () => {
+    if (!user) {
+      alert("Please register or login to comment!");
+      window.location.href = "/register";
+    } else {
+      console.log("Commented!");
+      // Implement comment logic here
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       {/* Banner Image with Parallax Effect */}
@@ -61,10 +108,10 @@ export default function CommunityForum() {
         <div
           className="absolute top-0 left-0 w-full h-full bg-cover bg-center"
           style={{
-            backgroundImage: 'url(/forest.jpg)',
-            backgroundAttachment: 'fixed',
-            backgroundPosition: 'center center',
-            backgroundSize: 'cover',
+            backgroundImage: "url(/forest.jpg)",
+            backgroundAttachment: "fixed",
+            backgroundPosition: "center center",
+            backgroundSize: "cover",
           }}
         />
         <div className="absolute top-0 left-0 w-full h-full bg-black opacity-40"></div>
@@ -78,12 +125,26 @@ export default function CommunityForum() {
       {/* Sticky Header */}
       <header className="top-0 z-10 bg-white dark:bg-gray-800 shadow-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Community Forum</h1>
+          <div className="flex items-center space-x-4">
+            {/* User Profile Icon */}
+            {user && (
+              <div className="w-10 h-10 rounded-full overflow-hidden">
+                <img
+                  src={user.profilePicture || "/default-avatar.jpg"} // Default image if user doesn't have a profile image
+                  alt="User Avatar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+              Community Forum
+            </h1>
+          </div>
           <button
             onClick={openModal}
-            className="bg-green-600 text-white hover:bg-green-700 py-2 px-4 rounded-lg"
+            className="bg-green-600 text-white hover:bg-green-700 py-2 px-4 rounded-lg flex items-center space-x-2"
           >
-            New Post
+            <span>New Post</span>
           </button>
         </div>
       </header>
@@ -94,14 +155,22 @@ export default function CommunityForum() {
           <div className="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-lg shadow-xl transform transition-all duration-300 scale-105 p-6">
             {/* Modal Header with Close Button */}
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">Create a New Post</h3>
-              <button onClick={closeModal} className="text-gray-600 dark:text-white hover:text-gray-800">
+              <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">
+                Create a New Post
+              </h3>
+              <button
+                onClick={closeModal}
+                className="text-gray-600 dark:text-white hover:text-gray-800"
+              >
                 <RiCloseFill className="w-6 h-6" />
               </button>
             </div>
 
             {/* Post Form */}
-            <div className="space-y-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+            <div
+              className="space-y-4 overflow-y-auto"
+              style={{ maxHeight: "calc(100vh - 200px)" }}
+            >
               {/* Post Title Input */}
               <input
                 type="text"
@@ -115,6 +184,7 @@ export default function CommunityForum() {
                 contentEditable="true"
                 onInput={handleContentChange}
                 className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[200px] relative"
+                role="textbox"
               >
                 {/* Placeholder Text */}
                 <span className="placeholder absolute left-4 top-4 text-gray-500 dark:text-gray-400">
@@ -142,13 +212,14 @@ export default function CommunityForum() {
 
                   {/* Text Formatting Buttons */}
                   <div className="flex items-center space-x-2 ml-4">
-                    <button onClick={handleBold} className="text-xl text-gray-600 dark:text-gray-400 hover:text-gray-800" title="Bold">
+                    <button onClick={handleBold} className="text-xl text-gray-600 dark:text-gray-400 hover:text-blue-500" title="Bold">
                       <AiOutlineBold />
                     </button>
-                    <button onClick={handleItalic} className="text-xl text-gray-600 dark:text-gray-400 hover:text-gray-800" title="Italic">
+                    <button onClick={handleItalic} className="text-xl text-gray-600 dark:text-gray-400 hover:text-blue-500" title="Italic">
                       <AiOutlineItalic />
                     </button>
-                    <button onClick={handleUnderline} className="text-xl text-gray-600 dark:text-gray-400 hover:text-gray-800" title="Underline">
+                    <button onClick={handleUnderline} className="text-xl text-gray-600 dark:text-gray-400 hover:text-blue-500" title="Underline">
+                      <AiOutlineItalic /> {/* Consider using a different icon or keeping the 'U' */}
                       <u>U</u>
                     </button>
                   </div>
@@ -174,7 +245,9 @@ export default function CommunityForum() {
               )}
 
               {/* Submit Button */}
-              <button className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+              <button
+                className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
+              >
                 Post
               </button>
             </div>
@@ -211,18 +284,25 @@ export default function CommunityForum() {
                 </p>
               </div>
 
-              <div className="p-4 flex justify-between items-center border-t border-gray-200 dark:border-gray-700">
-                <button className="flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-                  <ThumbsUp className="w-5 h-5 mr-2" />
-                  Like
+              <div className="p-4 flex items-center space-x-4 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={handleUpvote}
+                  className="flex items-center text-black dark:text-black hover:text-black"
+                >
+                  <BiUpvote className="w-5 h-5 mr-2" />
                 </button>
-                <button className="flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                <button
+                  onClick={handleDownvote}
+                  className="flex items-center text-black dark:text-black hover:text-black"
+                >
+                  <BiDownvote className="w-5 h-5 mr-2" />
+                </button>
+                <button
+                  onClick={handleComment}
+                  className="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 ml-auto"
+                >
                   <MessageCircle className="w-5 h-5 mr-2" />
-                  Comment
-                </button>
-                <button className="flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-                  <Share2 className="w-5 h-5 mr-2" />
-                  Share
+                  <span>Comment</span>
                 </button>
               </div>
             </div>
@@ -249,18 +329,25 @@ export default function CommunityForum() {
                 </p>
               </div>
 
-              <div className="p-4 flex justify-between items-center border-t border-gray-200 dark:border-gray-700">
-                <button className="flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-                  <ThumbsUp className="w-5 h-5 mr-2" />
-                  Like
+              <div className="p-4 flex items-center space-x-4 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={handleUpvote}
+                  className="flex items-center text-black dark:text-black hover:text-black"
+                >
+                  <BiUpvote className="w-5 h-5 mr-2" />
                 </button>
-                <button className="flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                <button
+                  onClick={handleDownvote}
+                  className="flex items-center text-black dark:text-black hover:text-black"
+                >
+                  <BiDownvote className="w-5 h-5 mr-2" />
+                </button>
+                <button
+                  onClick={handleComment}
+                  className="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 ml-auto"
+                >
                   <MessageCircle className="w-5 h-5 mr-2" />
-                  Comment
-                </button>
-                <button className="flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-                  <Share2 className="w-5 h-5 mr-2" />
-                  Share
+                  <span>Comment</span>
                 </button>
               </div>
             </div>
@@ -287,22 +374,30 @@ export default function CommunityForum() {
                 </p>
               </div>
 
-              <div className="p-4 flex justify-between items-center border-t border-gray-200 dark:border-gray-700">
-                <button className="flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-                  <ThumbsUp className="w-5 h-5 mr-2" />
-                  Like
+              <div className="p-4 flex items-center space-x-4 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={handleUpvote}
+                  className="flex items-center text-black dark:text-black hover:text-black"
+                >
+                  <BiUpvote className="w-5 h-5 mr-2" />
                 </button>
-                <button className="flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                <button
+                  onClick={handleDownvote}
+                  className="flex items-center text-black dark:text-black hover:text-black"
+                >
+                  <BiDownvote className="w-5 h-5 mr-2" />
+                </button>
+                <button
+                  onClick={handleComment}
+                  className="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 ml-auto"
+                >
                   <MessageCircle className="w-5 h-5 mr-2" />
-                  Comment
-                </button>
-                <button className="flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-                  <Share2 className="w-5 h-5 mr-2" />
-                  Share
+                  <span>Comment</span>
                 </button>
               </div>
             </div>
           </div>
+
           {/* Right Section: Trending Posts */}
           <div className="w-1/3 space-y-6 mb-8">
             <div className="shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-4">
@@ -354,5 +449,5 @@ export default function CommunityForum() {
         </div>
       </main>
     </div>
-  )
+  );
 }
