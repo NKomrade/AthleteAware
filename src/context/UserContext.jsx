@@ -1,17 +1,27 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext } from 'react';
 
-// Create UserContext
+// Create the context
 const UserContext = createContext();
 
-export const useUserContext = () => {
-  return useContext(UserContext);
-};
+// Custom hook to use the UserContext
+export const useUserContext = () => useContext(UserContext);
 
-// Create a provider component to wrap around the app
+// UserProvider component, it should receive 'children'
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    profilePhoto: "",
+    completedCourses: 0,
+    totalCourses: 0,
+    badges: [],
+    certifications: [],
+    recentActivity: [],
+    upcomingEvents: [],
+    personalBests: [],
+  });
 
-  // Set the user data
+  // Function to set the user data
   const setUserData = (userData) => {
     setUser(userData);
   };

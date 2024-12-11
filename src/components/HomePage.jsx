@@ -1,43 +1,46 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; 
 import newslogo from '../assets/news-logo.jpg';
 import podcastlogo from '../assets/podcast.jpg';
 
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [progress, setProgress] = useState([0, 0, 0, 0, 0]);// Current slide index
+
   const images = [
-    '/team.jpg',
-    '/running.jpg',
-    '/tennis.jpg',
     '/football.jpg',
-    '/cycling.jpg',
+    '/rules.png',
+    '/conversation.png',
+  ];
+
+  const slides = [
+    {
+      heading: 'Quick, Easy Lessons on Clean Sport',
+      subheading: 'Explore anti-doping courses designed to help you compete the right way.',
+      buttonText: 'Start Learning',
+      buttonLink: '/learn', // Update the link as needed
+    },
+    {
+      heading: 'Test Your Knowledge, Play Clean',
+      subheading: 'Take quizzes to prove your understanding of clean sport and earn badges.',
+      buttonText: 'Take a Quiz',
+      buttonLink: '/quiz', // Update the link as needed
+    },
+    {
+      heading: 'Join the Conversation',
+      subheading: 'Set goals, join forums, and explore the latest anti-doping updates in CleanCorner.',
+      buttonText: 'Explore CleanCorner',
+      buttonLink: '/cleancorner', // Update the link as needed
+    },
   ];
 
   // Auto-slide functionality
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prevSlide) => {
-        const nextSlide = (prevSlide + 1) % images.length;
-        
-        // If the next slide is the first one, reset progress
-        if (nextSlide === 0) {
-          setProgress([0, 0, 0, 0, 0]); // Reset progress instantly
-        }
-
-        return nextSlide;
-      });
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
     }, 3000); 
 
-    return () => clearInterval(interval); 
-  }, [images.length]);
-
-  // Update progress for each slide
-  useEffect(() => {
-    const newProgress = [...progress];
-    
-    newProgress[currentSlide] = 100;
-    setProgress(newProgress);
-  }, [currentSlide]);
+    return () => clearInterval(interval);
+  }, [slides.length]);
 
   return (
     <div className="flex flex-col min-h-screen text-white">
@@ -47,19 +50,27 @@ export default function HomePage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center py-12 md:py-24">
               {/* Left Column */}
-              <div className="space-y-8">
-              <h1 className="text-[2rem] md:text-6xl font-bold leading-tight">
-                <span className="text-black block text-2xl font-[Montserrat]">BE THE</span>
-                <span className="text-red-500 block text-6xl font-[Montserrat] font-bold">BEST ATHLETE </span>{' '}
-                <span className="text-black block text-2xl font-[Montserrat]">THAT<span className="text-black text-6xl font-[Montserrat]">YOU CAN BE.</span></span>
-              </h1>
+              <div className="space-y-8 mt-8">
+                <h1 className="text-[2rem] md:text-6xl font-bold leading-tight">
+                  <span className="text-black block text-3xl font-[Montserrat]">
+                    {slides[currentSlide].heading.split('\n').map((line, index) => (
+                      <span key={index}>{line}<br /></span>
+                    ))}
+                  </span>
+                  {/* Alternatively, if you prefer to keep it simple without handling line breaks */}
+                  {/* {slides[currentSlide].heading} */}
+                </h1>
                 <p className="text-gray-600 text-lg max-w-[600px]">
-                Transform your journey with us- where every step you take brings you closer to achieving your dreams. 
-                Whether it's through innovative solutions, dedicated support, or personal growth, we're here to help you.
+                  {slides[currentSlide].subheading}
                 </p>
-                <button className="px-8 py-3 border-2 border-[#1A2B3B] text-[#1A2B3B] font-semibold hover:bg-[#1A2B3B] hover:text-white transition-colors duration-300">
-                  Get Started
-                </button>
+                <div className="mt-8"> {/* Added margin-top to button */}
+                  <Link
+                    to={slides[currentSlide].buttonLink}
+                    className="px-8 py-3 border-2 border-[#1A2B3B] text-[#1A2B3B] font-semibold hover:bg-[#1A2B3B] hover:text-white transition-colors duration-300"
+                  >
+                    {slides[currentSlide].buttonText}
+                  </Link>
+                </div>
               </div>
 
               {/* Right Column with Slideshow */}
@@ -68,25 +79,9 @@ export default function HomePage() {
                   {/* Current Image */}
                   <img
                     src={images[currentSlide]}
-                    alt="Slide"
-                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                    alt={`Slide ${currentSlide + 1}`}
+                    className="w-full h-full object-cover rounded-lg shadow-lg transition-opacity duration-1000"
                   />
-
-                  {/* Dotted Progress Bar */}
-                  <div className="absolute bottom-4 left-0 w-full h-2 flex justify-center items-center space-x-2">
-                    {/* Create 5 Lines with Progress Filling */}
-                    {[...Array(5)].map((_, index) => (
-                      <div key={index} className="relative w-20 h-0.5 rounded-md bg-black">
-                        <div
-                          className="absolute top-0 left-0 h-full bg-white rounded-md"
-                          style={{
-                            width: `${progress[index]}%`,
-                            transition: `width 3000ms linear`, // Animation for 3 seconds
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
@@ -106,7 +101,7 @@ export default function HomePage() {
                 </p>
                 <a
                   href="/courses"
-                  className=" text-black text-xl py-3 px-8 hover:font-bold"
+                  className=" text-black bg-white text-xl py-3 px-8 hover:font-bold"
                 >
                   Enroll Now 
                 </a>
@@ -116,72 +111,90 @@ export default function HomePage() {
               <div className="w-full md:w-1/2">
                 <div className="overflow-x-auto py-4 scroll-smooth">
                   <div className="flex gap-12">
-                    <a href="/courses/basketball" target="_blank" className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden">
-                      <img
-                        src="https://images.pexels.com/photos/71103/basketball-sports-teams-players-71103.jpeg?auto=compress&cs=tinysrgb&w=600"
-                        alt="Basketball Icon"
-                        className="w-full h-56 object-cover rounded-t-lg transition duration-300 transform hover:scale-110"
-                      />
+                    <a
+                      href="/courses/basketball"
+                      target="_blank"
+                      className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden"
+                    >
+                      <div
+                        style={{ backgroundColor: '#B7EEAB' }}
+                        className="w-full h-56 rounded-t-lg transition duration-300 transform hover:scale-110"
+                      ></div>
                       <div className="p-6">
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">Basketball Training</h3>
                         <p className="text-gray-500 text-sm">Sharpen your skills in basketball! Master shooting, defense, and team tactics with expert coaching.</p>
                       </div>
                     </a>
 
-                    <a href="/courses/football" target="_blank" className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden">
-                      <img
-                        src="https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg?auto=compress&cs=tinysrgb&w=600"
-                        alt="Football Icon"
-                        className="w-full h-56 object-cover rounded-t-lg transition duration-300 transform hover:scale-110"
-                      />
+                    <a
+                      href="/courses/football"
+                      target="_blank"
+                      className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden"
+                    >
+                      <div
+                        style={{ backgroundColor: '#FEBAC7' }}
+                        className="w-full h-56 rounded-t-lg transition duration-300 transform hover:scale-110"
+                      ></div>
                       <div className="p-6">
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">Football Tactics</h3>
                         <p className="text-gray-500 text-sm">Master the strategies, footwork, and game vision needed for competitive football. Elevate your play.</p>
                       </div>
                     </a>
 
-                    <a href="/courses/tennis" target="_blank" className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden">
-                      <img
-                        src="https://images.pexels.com/photos/6250897/pexels-photo-6250897.jpeg?auto=compress&cs=tinysrgb&w=600"
-                        alt="Tennis Icon"
-                        className="w-full h-56 object-cover rounded-t-lg transition duration-300 transform hover:scale-110"
-                      />
+                    <a
+                      href="/courses/tennis"
+                      target="_blank"
+                      className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden"
+                    >
+                      <div
+                        style={{ backgroundColor: '#FFF39F' }}
+                        className="w-full h-56 rounded-t-lg transition duration-300 transform hover:scale-110"
+                      ></div>
                       <div className="p-6">
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">Tennis Coaching</h3>
                         <p className="text-gray-500 text-sm">Enhance your serve, backhand, and overall tennis skills with focused coaching and practice.</p>
                       </div>
                     </a>
 
-                    <a href="/courses/running" target="_blank" className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden">
-                      <img
-                        src="https://images.pexels.com/photos/1199590/pexels-photo-1199590.jpeg?auto=compress&cs=tinysrgb&w=600"
-                        alt="Running Icon"
-                        className="w-full h-56 object-cover rounded-t-lg transition duration-300 transform hover:scale-110"
-                      />
+                    <a
+                      href="/courses/running"
+                      target="_blank"
+                      className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden"
+                    >
+                      <div
+                        style={{ backgroundColor: '#C1C1FF' }}
+                        className="w-full h-56 rounded-t-lg transition duration-300 transform hover:scale-110"
+                      ></div>
                       <div className="p-6">
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">Endurance Running</h3>
                         <p className="text-gray-500 text-sm">Increase your stamina and perfect your running form with professional endurance running coaching.</p>
                       </div>
                     </a>
 
-                    <a href="/courses/swimming" target="_blank" className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden">
-                      <img
-                        src="https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=600"
-                        alt="Swimming Icon"
-                        className="w-full h-56 object-cover rounded-t-lg transition duration-300 transform hover:scale-110"
-                      />
+                    <a
+                      href="/courses/swimming"
+                      target="_blank"
+                      className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden"
+                    >
+                      <div
+                        style={{ backgroundColor: '#D3F8FF' }}
+                        className="w-full h-56 rounded-t-lg transition duration-300 transform hover:scale-110"
+                      ></div>
                       <div className="p-6">
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">Swimming Techniques</h3>
                         <p className="text-gray-500 text-sm">Master swimming techniques to improve your speed, stroke, and endurance for better performance.</p>
                       </div>
                     </a>
 
-                    <a href="/courses/weightlifting" target="_blank" className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden">
-                      <img
-                        src="https://images.pexels.com/photos/4793254/pexels-photo-4793254.jpeg?auto=compress&cs=tinysrgb&w=600"
-                        alt="Weightlifting Icon"
-                        className="w-full h-56 object-cover rounded-t-lg transition duration-300 transform hover:scale-110"
-                      />
+                    <a
+                      href="/courses/weightlifting"
+                      target="_blank"
+                      className="flex-none w-80 bg-white rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden"
+                    >
+                      <div
+                        style={{ backgroundColor: '#FFEDED' }}
+                        className="w-full h-56 rounded-t-lg transition duration-300 transform hover:scale-110"
+                      ></div>
                       <div className="p-6">
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">Weightlifting Basics</h3>
                         <p className="text-gray-500 text-sm">Learn the fundamentals of weightlifting, focusing on strength-building and proper technique.</p>
@@ -217,10 +230,10 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent">
                   <div className="absolute bottom-0 p-6">
                     <span className="inline-block px-3 py-1 bg-white text-gray-900 text-sm font-semibold rounded-[7px] mb-3">
-                      MENTAL HEALTH
+                      ANTI DOPING
                     </span>
                     <h3 className="text-2xl font-bold text-white mb-2">
-                      Calling all Paris Olympians – our health study needs you
+                      Handball Player Tests Positive for Doping
                     </h3>
                   </div>
                 </div>
@@ -237,8 +250,8 @@ export default function HomePage() {
                   className="w-[111px] h-[111px] object-cover rounded-lg"
                 />
                 <div>
-                  <span className="text-blue-500 text-sm font-semibold">PARIS 2024</span>
-                  <h3 className="font-bold text-gray-900">Emma McKeon: Advice from Australia's most decorated Olympian</h3>
+                  <span className="text-blue-500 text-sm font-semibold">Argentine Footballer 'Papu' Gómez's Doping Revelation</span>
+                  <h3 className="font-bold text-gray-900 text-sm">Alejandro received a doping notification four days before the 2022 World Cup final.</h3>
                 </div>
               </article>
 
@@ -250,8 +263,8 @@ export default function HomePage() {
                   className="w-[111px] h-[111px] object-cover rounded-lg"
                 />
                 <div>
-                  <span className="text-blue-500 text-sm font-semibold">PARIS 2024</span>
-                  <h3 className="font-bold text-gray-900">Future of boxing and road to Paris 2024</h3>
+                  <span className="text-blue-500 text-sm font-semibold">Iga Swiatek's Doping Case Raises Concerns</span>
+                  <h3 className="font-bold text-gray-900 text-sm">Tennis player Iga Swiatek served a 1 month suspension after testing positive.</h3>
                 </div>
               </article>
 
@@ -263,8 +276,8 @@ export default function HomePage() {
                   className="w-[111px] h-[111px] object-cover rounded-lg"
                 />
                 <div>
-                  <span className="text-blue-500 text-sm font-semibold">PREVENTION OF COMPETITION</span>
-                  <h3 className="font-bold text-gray-900">Believe in Sport ambassadors in action at Paris 2024</h3>
+                  <span className="text-blue-500 text-sm font-semibold">Nick Kyrgios Criticizes Doping Rulings</span>
+                  <h3 className="font-bold text-gray-900 text-sm">Tennis player Nick Kyrgios faced criticism for opposing doping rulings on Jannik Sinner and Iga Swiatek.</h3>
                 </div>
               </article>
 
@@ -276,8 +289,8 @@ export default function HomePage() {
                   className="w-[111px] h-[111px] object-cover rounded-lg"
                 />
                 <div>
-                  <span className="text-blue-500 text-sm font-semibold">ATHLETE MOMENT</span>
-                  <h3 className="font-bold text-gray-900">Athlete Moment bringing loved ones together at Paris 2024</h3>
+                  <span className="text-blue-500 text-sm font-semibold">Spanish anti-doping agency, CELAD</span>
+                  <h3 className="font-bold text-gray-900 text-sm">CELAD is criticized for ignoring 11 football doping cases between 2017 and 2021.</h3>
                 </div>
               </article>
             </div>

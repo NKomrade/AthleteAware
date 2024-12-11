@@ -4,10 +4,10 @@ import { AiOutlineBold, AiOutlineItalic } from "react-icons/ai";
 import { MessageCircle } from "lucide-react";
 import { BiImageAdd, BiUpvote, BiDownvote } from "react-icons/bi";
 import { RiCloseFill } from "react-icons/ri";
-import { useUser } from "../context/UserContext"; // Adjust the path as needed
+import { useUserContext } from "../context/UserContext"; // Adjust the path as needed
 
 export default function CommunityForum() {
-  const { user } = useUser(); // Get user state from context
+  const { user } = useUserContext(); // Get user state from context
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);

@@ -4,10 +4,10 @@ import { db, storage, auth } from "../firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { useUser } from "../context/UserContext"; 
+import { useUserContext } from "../context/UserContext";  // Use the hook instead of UserProvider directly
 
 function RegisterPage() {
-  const { setUserData } = useUser(); // Get setUserData from context
+  const { setUserData } = useUserContext(); // Access setUserData via the hook
   const [role, setRole] = useState("user");
   const [showPassword, setShowPassword] = useState(false);
   const [profilePic, setProfilePic] = useState(null);
@@ -19,6 +19,8 @@ function RegisterPage() {
     gender: "",
     region: "",
     govtID: "",
+    completedCourses: 0,
+    totalCourses: 0,
   });
 
   const [error, setError] = useState("");

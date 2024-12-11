@@ -14,7 +14,7 @@ const games = [
   },
   {
     id: 2,
-    name: 'FlipCards',
+    name: 'Memory Card Game',
     image: '/flip_cards.png',
     logo: '/flipcard-logo.png',
     video: '/flip_card.mp4',
@@ -23,7 +23,7 @@ const games = [
   },
   {
     id: 3,
-    name: 'Bulls Eye',
+    name: 'Choose Your Path',
     image: '/bulls_eye.png',
     logo: '/bullseye-logo.png',
     video: '/Archery.mp4',
@@ -32,7 +32,7 @@ const games = [
   },
   {
     id: 4,
-    name: 'Memory Match',
+    name: 'Anti Doping Adventure',
     image: '/memory_match.png',
     logo: '/memory-match-logo.png',
     video: '/MemoryMatch.mp4',
