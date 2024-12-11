@@ -10,7 +10,7 @@ export default function CommunityForum() {
   const { user } = useUserContext(); // Get user state from context
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
+  const [setImageFile] = useState(null);
 
   const contentEditableRef = useRef(null);
 
